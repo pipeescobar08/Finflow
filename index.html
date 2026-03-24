@@ -943,26 +943,36 @@ function generateInsights(txs, ing, gas, sav, sorted) {
 
 // ── Google Sheets Integration ─────────────────────────────
 async function sendToSheets(tx) {
-  if(!state.sheetsUrl) return false;
+  if (!state.sheetsUrl) {
+    console.log("No hay URL de Sheets configurada");
+    return false;
+  }
+
   try {
     const payload = {
-      fecha:    tx.date,
-      tipo:     tx.type === 'income' ? 'Ingreso' : 'Gasto',
-      categoria:tx.category,
-      monto:    tx.amount,
-      metodo:   tx.method,
-      notas:    tx.note,
-      id:       tx.id,
+      fecha: tx.date,
+      tipo: tx.type === 'income' ? 'Ingreso' : 'Gasto',
+      categoria: tx.category,
+      monto: tx.amount,
+      metodo: tx.method,
+      notas: tx.note,
+      id: tx.id,
     };
-    const resp = await fetch("https://script.google.com/macros/s/AKfycbw9jY-lOLgiTaKMvV5zRlhKc5_Sy2Oa1D_cM06wgrwcElZS1PEH_w_t6IHe-HKusgKg/exec", {
+
+    console.log("Enviando a Sheets:", payload);
+
+    await fetch(state.sheetsUrl, {
       method: 'POST',
-      mode:   'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body:   JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload),
     });
-    return true; // no-cors always returns opaque; assume success
-  } catch(e) {
-    console.error('Sheets sync error:', e);
+
+    return true;
+
+  } catch (error) {
+    console.error("Error enviando a Sheets:", error);
     return false;
   }
 }
