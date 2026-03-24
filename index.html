@@ -645,7 +645,6 @@ function init() {
   state.sheetsUrl    = localStorage.getItem(URL_KEY) || '';
 
   // Seed demo data if empty
-  if (state.transactions.length === 0) state.transactions = [];
 
   const now = new Date();
   document.getElementById('home-date').textContent =
