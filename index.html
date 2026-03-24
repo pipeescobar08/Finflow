@@ -943,10 +943,7 @@ function generateInsights(txs, ing, gas, sav, sorted) {
 
 // ── Google Sheets Integration ─────────────────────────────
 async function sendToSheets(tx) {
-  if (!state.sheetsUrl) {
-    console.log("No hay URL de Sheets configurada");
-    return false;
-  }
+  if (!state.sheetsUrl) return false;
 
   try {
     const payload = {
@@ -959,20 +956,19 @@ async function sendToSheets(tx) {
       id: tx.id,
     };
 
-    console.log("Enviando a Sheets:", payload);
+    // 👇 CAMBIO CLAVE: usar formData en vez de JSON puro
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(payload));
 
     await fetch(state.sheetsUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload),
+      method: "POST",
+      body: formData
     });
 
     return true;
 
   } catch (error) {
-    console.error("Error enviando a Sheets:", error);
+    console.error(error);
     return false;
   }
 }
